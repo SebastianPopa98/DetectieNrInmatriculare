@@ -1,6 +1,8 @@
 #include<opencv2/opencv.hpp>
 #include<iostream>
 #include<conio.h>     
+#include "EdgeDetect.h"
+
 using namespace std;
 using namespace cv;
 
@@ -29,16 +31,22 @@ int main() {
 															
 	imshow("imgOriginal", imgOriginal);     
 	imshow("imgCanny", imgCanny);
-	vector<vector<Point> > contours;
-	findContours(imgCanny, contours, RETR_TREE, CHAIN_APPROX_SIMPLE);
-	Mat drawing = Mat::zeros(imgCanny.rows, imgCanny.cols, CV_8UC3);;
-	for (int i = 0; i< contours.size(); i++){
-		Scalar color(rand() & 255, rand() & 255, rand() & 255);
-		drawContours(drawing, contours, i, color);
-	}
+	//vector<vector<Point> > contours;
+	//findContours(imgCanny, contours, RETR_TREE, CHAIN_APPROX_SIMPLE);
+	//Mat drawing = Mat::zeros(imgCanny.rows, imgCanny.cols, CV_8UC3);
+	//for (int i = 0; i< contours.size(); i++){
+	//	Scalar color(rand() & 255, rand() & 255, rand() & 255);
+	//	drawContours(drawing, contours, i, color);
+	//}
+	
 
-	namedWindow("Contoururi", WINDOW_AUTOSIZE);
-	imshow("Contoururi", drawing);
+
+	Mat imgBlurred1 = gaussian_blur(imgGrayscale);
+
+	namedWindow("Blur", WINDOW_AUTOSIZE);
+	imshow("Blur", imgBlurred1);
+
+	
 	//accesare pixeli
 	//for (int y = 0; y < imgCanny.cols; y++) {
 	//	for (int x = 0; x < imgCanny.rows; x++) {
@@ -51,3 +59,4 @@ int main() {
 
 	return(0);
 }
+
