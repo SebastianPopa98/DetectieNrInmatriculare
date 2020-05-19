@@ -2,7 +2,8 @@
 #include<iostream>
 #include<conio.h>     
 #include "EdgeDetect.h"
-
+#include "Dilation.h"
+#include "Blob.h"
 using namespace std;
 using namespace cv;
 
@@ -11,8 +12,8 @@ int main() {
 	Mat imgGrayscale;       
 	Mat imgBlurred;        
 	Mat imgCanny;           
-
-	imgOriginal = imread("1.jpg");         
+	Mat imgThresh;
+	imgOriginal = imread("6.jpg");         
 
 	if (imgOriginal.empty()) {                                  
 		cout << "error: image not read from file\n\n";     
@@ -20,43 +21,34 @@ int main() {
 		return(0);                                              
 	}
 
-	cvtColor(imgOriginal, imgGrayscale, COLOR_BGR2GRAY);    
-
+	cvtColor(imgOriginal, imgGrayscale, COLOR_BGR2GRAY);  
+	imshow("imgGrayscale", imgGrayscale);
+	//Mat imgBlurred1 = gaussian_blur(imgGrayscale, 1.0);
 	GaussianBlur(imgGrayscale, imgBlurred, Size(5, 5), 1.4); 
-
-	Canny(imgBlurred, imgCanny, 30, 250);                     
+	adaptiveThreshold(imgBlurred, imgThresh, 255.0, ADAPTIVE_THRESH_GAUSSIAN_C, THRESH_BINARY_INV, 7, 20);
+	Canny(imgThresh, imgCanny, 30, 250);                     
 						
 	namedWindow("imgOriginal", WINDOW_AUTOSIZE);    
 	namedWindow("imgCanny", WINDOW_AUTOSIZE);        
 															
 	imshow("imgOriginal", imgOriginal);     
 	imshow("imgCanny", imgCanny);
-	//vector<vector<Point> > contours;
-	//findContours(imgCanny, contours, RETR_TREE, CHAIN_APPROX_SIMPLE);
-	//Mat drawing = Mat::zeros(imgCanny.rows, imgCanny.cols, CV_8UC3);
-	//for (int i = 0; i< contours.size(); i++){
-	//	Scalar color(rand() & 255, rand() & 255, rand() & 255);
-	//	drawContours(drawing, contours, i, color);
-	//}
 	
 
-
-	Mat imgBlurred1 = gaussian_blur(imgGrayscale);
-
-	namedWindow("Blur", WINDOW_AUTOSIZE);
-	imshow("Blur", imgBlurred1);
+	//Mat imgCanny1 = Canny_edge(imgBlurred1);
 
 	
-	//accesare pixeli
-	//for (int y = 0; y < imgCanny.cols; y++) {
-	//	for (int x = 0; x < imgCanny.rows; x++) {
-	//		Scalar pixel = imgCanny.at<uchar>(x, y);
-	//		cout << pixel.val[0] << ",";
-	//	}
-	//	cout << endl;
-	//}
-	waitKey(0);                 
+	Mat imgdilation;
+	imgdilation = dilation(imgCanny);
+	for (int i = 0; i < 15; i++) {
+		imgdilation = dilation(imgdilation);
+	}
+	imshow("imgdilation", imgdilation);
+	
+	detect(imgOriginal, imgdilation);
+	
+	waitKey(0);
+
 
 	return(0);
 }
-
